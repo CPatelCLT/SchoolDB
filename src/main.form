@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="main">
+  <splitpane id="b7c3">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="27dc6" layout-manager="GridBagLayout">
+        <constraints>
+          <splitpane position="left"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <component id="3582" class="javax.swing.JTable" binding="table1" default-binding="true">
+        <constraints>
+          <splitpane position="right"/>
+        </constraints>
+        <properties/>
+      </component>
+    </children>
+  </splitpane>
+</form>
