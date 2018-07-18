@@ -67,4 +67,9 @@ public class Student {
     public void setYear(int year) {
         this.year = year;
     }
+
+    @Override
+    public String toString() {
+        return student_id + '\t' + firstName + '\t'+'\t' + lastName + '\t'+'\t' + gender + '\t' + birthdate + '\t' + year;
+    }
 }
