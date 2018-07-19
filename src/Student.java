@@ -20,6 +20,10 @@ public class Student {
         this.year = year;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     public int getStudent_id() {
         return student_id;
     }

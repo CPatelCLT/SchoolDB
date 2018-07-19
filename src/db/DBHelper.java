@@ -10,11 +10,6 @@ public class DBHelper {
     public DBHelper() {
         try {
             dbConn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/schooldb","root","");
-            Statement myStmt = dbConn.createStatement();
-            ResultSet myRS = myStmt.executeQuery("select * from students");
-            while (myRS.next()) {
-                //System.out.println(myRS.getString("last_name") + ", " + myRS.getString("first_name"));
-            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -30,7 +25,6 @@ public class DBHelper {
             while (myRS.next()) {
                  Student sRecord = new Student(parseInt(myRS.getString("student_id")), myRS.getString("first_name"),myRS.getString("last_name"), myRS.getString("gender").charAt(0),formatter.parse(myRS.getString("birthdate")), parseInt(myRS.getString("class")));
                 tempList.add(sRecord);
-                 //System.out.println(myRS.getString("last_name") + ", " + myRS.getString("first_name"));
             }
         }
         catch (Exception e) {
@@ -65,16 +59,12 @@ public class DBHelper {
             ArrayList<TranscriptItem> transcriptItems = new ArrayList<TranscriptItem>();
             while (myRS.next()) {
 
-                Course tempC = new Course(myRS.getInt("course_id"), myRS.getString("course_name"), myRS.getInt("class"));
+                Course tempC = getCourseBy(myRS.getInt("course_id"));
                 TranscriptItem ti = new TranscriptItem(tempC, myRS.getDouble("grade"));
                 transcriptItems.add(ti);
-                //Student sRecord = new Student(parseInt(myRS.getString("student_id")), myRS.getString("first_name"),myRS.getString("last_name"), myRS.getString("gender").charAt(0),formatter.parse(myRS.getString("birthdate")), parseInt(myRS.getString("class")));
-                //tempList.add(sRecord);
-                //System.out.println(myRS.getString("last_name") + ", " + myRS.getString("first_name"));
             }
             t = new Transcript(getStudentByID(sID), transcriptItems);
             return t;
-            //s = new Student(parseInt(myRS.getString("student_id")), myRS.getString("first_name"),myRS.getString("last_name"), myRS.getString("gender").charAt(0),formatter.parse(myRS.getString("birthdate")), parseInt(myRS.getString("class")));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -83,13 +73,57 @@ public class DBHelper {
         return null;
     }
 
-    public static ArrayList<Course> getAllCourses() {
-        //TODO Create Method
+    public static Report getReportByID(int cID) {
+        Report r;
+
+        try {
+            Statement myStmt = dbConn.createStatement();
+            ResultSet myRS = myStmt.executeQuery("select student_id, first_name, last_name, grade, course_name from registration inner join students on registration.students_student_id = students.student_id inner join courses on registration.courses_course_id = courses.course_id where course_id = "+cID);
+            ArrayList<ReportItem> reportItems = new ArrayList<ReportItem>();
+            while (myRS.next()) {
+
+                Student tempS = getStudentByID(myRS.getInt("student_id"));
+                ReportItem ri = new ReportItem(tempS, myRS.getDouble("grade"));
+                reportItems.add(ri);
+            }
+            r = new Report(getCourseBy(cID), reportItems);
+            return r;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
-    public static ArrayList<Transcript> getAllSchedules() {
-        //TODO Create Method
+    private static Course getCourseBy(int cID) {
+        Course c;
+        try {
+            Statement myStmt = dbConn.createStatement();
+            ResultSet myRS = myStmt.executeQuery("select * from courses where course_id = " + cID);
+            myRS.next();
+            c = new Course(parseInt(myRS.getString("course_id")), myRS.getString("course_name"), parseInt(myRS.getString("class")));
+            return c;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
+    }
+
+    public static ArrayList<Course> getAllCourses() {
+        ArrayList<Course> tempList = new ArrayList<Course>();
+        try {
+            Statement myStmt = dbConn.createStatement();
+            ResultSet myRS = myStmt.executeQuery("select * from courses");
+            while (myRS.next()) {
+                Course cRecord = new Course(parseInt(myRS.getString("course_id")), myRS.getString("course_name"), parseInt(myRS.getString("class")));
+                tempList.add(cRecord);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tempList;
     }
 }

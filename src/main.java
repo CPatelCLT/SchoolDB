@@ -9,7 +9,6 @@ public class main {
     private JTable table1;
     public static ArrayList<Student> students;
     public static ArrayList<Course> courses;
-    public static ArrayList<Transcript> transcripts;
     public static DBHelper db;
 
     public static void main(String[] args) {
@@ -17,7 +16,6 @@ public class main {
         db = new DBHelper();
         students = DBHelper.getAllStudents();
         courses = DBHelper.getAllCourses();
-        transcripts = DBHelper.getAllSchedules();
 
 //        for (Student s : students) {
 //            System.out.println(s.getLastName() +", "+ s.getFirstName());
@@ -41,6 +39,13 @@ public class main {
                     break;
                 case "c":
                     showCourseList();
+                    System.out.print("Enter the ID to open course report, or 'x' to exit:  ");
+                    input = sc.next();
+                    if (input.equals('x')) {
+                        break;
+                    } else {
+                        showCourseReport(parseInt(input));
+                    }
                     break;
                 default: System.out.println("Not a valid input"); break;
             }
@@ -48,6 +53,19 @@ public class main {
             input = sc.next();
         } while(!input.toLowerCase().equals("x"));
 
+    }
+
+    private static void showCourseReport(int input) {
+        Report r = db.getReportByID(input);
+        System.out.printf("%s\t%20s\t%s%n", "Row", "Student", "Grade");
+        int c = 0;
+        double avg = 0.00;
+        for(ReportItem ri: r.getGrades()) {
+            c++;
+            avg+=ri.getGrade();
+            System.out.printf("%d\t%20s\t%.2f%n", c, ri.getStudent().getFullName(), ri.getGrade());
+        }
+        System.out.println("The average grade is: " + String.format("%.2f",avg/c));
     }
 
     private static void showTranscript(int input) {
@@ -71,9 +89,9 @@ public class main {
     }
 
     private static void showCourseList() {
-        System.out.printf("%s\t%15s\t%15s\t%s%n", "ID", "CourseName", "Year");
+        System.out.printf("%s\t%15s\t%s%n", "ID", "CourseName", "Year");
         for (Course c : courses) {
-            System.out.printf("%d\t%15s\t%.2f%n", c.getCourseID(), c.getCourseName() , c.getCourseYear());
+            System.out.printf("%d\t%15s\t%d%n", c.getCourseID(), c.getCourseName() , c.getCourseYear());
         }
     }
 }
